@@ -1,260 +1,276 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title data-en="Lavi's Legendary Keyboard Fund" data-he="הקרן למקלדת האגדית של לביא">Lavi's Legendary Keyboard Fund</title>
+    <title>לוח מודעות דיגיטלי - בית כנסת המרכזי</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=Assistant:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Gilded Parchment -->
+    <!-- Application Structure Plan: The application uses a two-part dashboard structure as specified in the source report, which is ideal for digital signage. A large, dynamic upper panel (60% height) rotates key messages (dedications, celebrations) to capture attention, while a static lower panel (40% height) presents essential, persistent information (schedules, times, clock) in a clear three-column grid. This separation ensures that viewers can always find critical information at a glance while being kept up-to-date with changing announcements. The entire layout is Right-to-Left (RTL) to support the Hebrew language requirement. -->
+    <!-- Visualization & Content Choices: Report Info: Dedications, Simchos -> Goal: Inform/Celebrate -> Presentation: Large text-based cards with optional images in a rotating display. Interaction: Automatic rotation. Justification: Maximizes visibility for key announcements on a large screen. | Report Info: Zmanim, Schedule, Clock -> Goal: Inform -> Presentation: Static, high-contrast text lists in a grid. Interaction: Clock updates live. Justification: Guarantees readability and constant availability of essential daily information. Library/Method: All elements are structured HTML styled with Tailwind CSS and dynamically updated with vanilla JavaScript. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
         body {
-            font-family: 'Inter', 'Assistant', sans-serif;
+            font-family: 'Assistant', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
-        /* Custom animation for the progress bar loading */
-        @keyframes progress-grow {
-            from { width: 0%; }
+        .main-content-item {
+            animation: fadeIn 0.8s ease-in-out;
         }
-        .progress-bar-animated {
-            animation: progress-grow 1.5s ease-out forwards;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        /* Style for Hebrew text */
-        html[lang="he"] body {
-            direction: rtl;
+        .scrolling-list {
+            height: 100%;
+            overflow-y: auto;
+            scrollbar-width: none; /* Firefox */
+        }
+        .scrolling-list::-webkit-scrollbar {
+            display: none; /* Safari and Chrome */
         }
     </style>
 </head>
-<body class="bg-gray-900 text-gray-200">
+<body class="bg-stone-100 text-gray-800 h-screen w-screen overflow-hidden flex flex-col">
 
-    <div class="container mx-auto p-4 md:p-8 max-w-4xl">
-
-        <!-- Language Switcher -->
-        <div class="text-right mb-4">
-            <button id="lang-switcher" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-full transition-colors duration-300">
-                <span data-en="עברית" data-he="English">עברית</span>
-            </button>
-        </div>
-
-        <!-- Header -->
-        <header class="text-center mb-8">
-            <h1 class="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-cyan-400 mb-2" data-en="Lavi's Legendary Keyboard Fund" data-he="הקרן למקלדת האגדית של לביא">Lavi's Legendary Keyboard Fund</h1>
-            <p class="text-lg text-gray-400" data-en="Fueling Our CTO's Genius, One Keystroke at a Time!" data-he="מתדלקים את הגאונות של ה-CTO שלנו, הקלדה אחר הקלדה!">Fueling Our CTO's Genius, One Keystroke at a Time!</p>
-        </header>
-
-        <!-- Main Content -->
-        <main class="bg-gray-800 rounded-2xl shadow-2xl p-6 md:p-8">
-            <div class="flex flex-col md:flex-row gap-8">
-                <!-- Image -->
-                <div class="md:w-1/3 flex-shrink-0">
-                    <img src="https://images.unsplash.com/photo-1618384887929-16ec33fab9ef?q=80&w=2080&auto=format&fit=crop" 
-                         onerror="this.onerror=null;this.src='https://placehold.co/400x400/1F2937/FFFFFF?text=Cool+Keyboard';"
-                         alt="A high-end mechanical keyboard" class="rounded-xl object-cover w-full h-full">
+    <header class="w-full bg-stone-200/80 backdrop-blur-sm p-4 shadow-md z-10">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 bg-amber-800/10 rounded-full flex items-center justify-center">
+                     <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-amber-800"><path d="M20 10v11a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V10"/><path d="M18 22V8l-6-4-6 4v14"/><path d="M14 22V16a2 2 0 0 0-4 0v6"/></svg>
                 </div>
-                
-                <!-- Details -->
-                <div class="md:w-2/3">
-                    <h2 class="text-2xl font-bold mb-3" data-en="The Mission" data-he="המשימה">The Mission</h2>
-                    <p class="text-gray-400 mb-6" data-en="Our CTO, Lavi, is a hero. He swoops in to solve any problem, debugs the impossible, and guides us with wisdom. But a hero is only as good as their tools. We're on a mission to equip Lavi with the ultimate office accessory: a top-tier, customized mechanical keyboard. This will unlock his full potential and keep him happy for years to come!" data-he="ה-CTO שלנו, לביא, הוא גיבור. הוא מגיע לפתור כל בעיה, מתקן את הבלתי אפשרי, ומדריך אותנו בחוכמה. אבל גיבור טוב רק כמו הכלים שלו. אנחנו במשימה לצייד את לביא באביזר המשרדי האולטימטיבי: מקלדת מכנית מותאמת אישית מהשורה הראשונה. זה ישחרר את מלוא הפוטנציאל שלו וישמור עליו מאושר לשנים הבאות!">Our CTO, Lavi, is a hero. He swoops in to solve any problem, debugs the impossible, and guides us with wisdom. But a hero is only as good as their tools. We're on a mission to equip Lavi with the ultimate office accessory: a top-tier, customized mechanical keyboard. This will unlock his full potential and keep him happy for years to come!</p>
+                <h1 id="shul-name" class="text-3xl font-bold text-amber-900">בית הכנסת המרכזי, טבריה</h1>
+            </div>
+            <div id="date-time-header" class="text-left">
+                <div id="clock" class="text-4xl font-bold text-gray-900"></div>
+                <div id="hebrew-date" class="text-lg text-gray-600"></div>
+            </div>
+        </div>
+    </header>
 
-                    <!-- Progress Bar -->
-                    <div class="mb-6">
-                        <div class="flex justify-between items-end mb-1 text-sm font-medium text-gray-300">
-                           <span id="current-amount">$4,500</span>
-                           <span class="text-gray-400" data-en="Goal: $10,000" data-he="יעד: $10,000">Goal: $10,000</span>
-                        </div>
-                        <div class="w-full bg-gray-700 rounded-full h-4">
-                            <div id="progress-bar" class="bg-gradient-to-r from-purple-500 to-cyan-500 h-4 rounded-full progress-bar-animated" style="width: 45%;"></div>
-                        </div>
+    <main id="main-content-area" class="flex-grow flex items-center justify-center p-8">
+        <!-- Rotating content will be injected here -->
+    </main>
+
+    <footer class="w-full bg-white/70 backdrop-blur-sm shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] h-[40vh]">
+        <div class="h-full mx-auto grid grid-cols-3 gap-px bg-gray-200">
+            <!-- Zmanim Column -->
+            <div class="bg-stone-50 p-6 flex flex-col">
+                <h2 class="text-3xl font-bold text-amber-800 border-b-2 border-amber-800/50 pb-2 mb-4">זמני היום</h2>
+                <ul id="zmanim-list" class="space-y-3 text-2xl">
+                    <!-- Zmanim will be populated here -->
+                </ul>
+            </div>
+
+            <!-- Schedule Column -->
+            <div class="bg-stone-50 p-6 flex flex-col">
+                <h2 class="text-3xl font-bold text-blue-900 border-b-2 border-blue-900/50 pb-2 mb-4">לוח זמנים</h2>
+                <div class="grid grid-cols-2 gap-x-6 text-2xl">
+                    <div>
+                        <h3 class="font-semibold mb-2">תפילות חול</h3>
+                        <ul id="weekday-prayers" class="space-y-2"></ul>
                     </div>
-
-                    <!-- Donate Button -->
-                    <button id="donate-now-btn" class="w-full bg-cyan-500 hover:bg-cyan-400 text-white font-bold py-3 px-6 rounded-lg text-lg shadow-lg hover:shadow-cyan-500/50 transition-all duration-300 transform hover:scale-105" data-en="Donate Now" data-he="תרום עכשיו">Donate Now</button>
+                    <div>
+                        <h3 class="font-semibold mb-2">תפילות שבת</h3>
+                        <ul id="shabbat-prayers" class="space-y-2"></ul>
+                    </div>
+                </div>
+                <div class="mt-auto pt-4">
+                     <h3 class="font-semibold mb-2 text-2xl">שיעורים ותוכניות</h3>
+                     <ul id="shiurim-list" class="space-y-2 text-xl"></ul>
                 </div>
             </div>
-        </main>
 
-        <!-- Donations Section -->
-        <section class="mt-12">
-            <h3 class="text-2xl font-bold text-center mb-6" data-en="Wall of Support" data-he="קיר התמיכה">Wall of Support</h3>
-            <div id="donations-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- Donation cards will be injected here by JS -->
+            <!-- Announcements Column -->
+            <div class="bg-stone-50 p-6 flex flex-col h-full">
+                <h2 class="text-3xl font-bold text-teal-800 border-b-2 border-teal-800/50 pb-2 mb-4">הודעות ואירועים</h2>
+                <div class="scrolling-list flex-grow">
+                    <ul id="announcements-list" class="space-y-4 text-2xl">
+                        <!-- Announcements will be populated here -->
+                    </ul>
+                </div>
             </div>
-        </section>
-    </div>
-
-    <!-- Donation Modal -->
-    <div id="donation-modal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-50 hidden">
-        <div class="bg-gray-800 rounded-2xl shadow-xl w-full max-w-md p-8 relative transform transition-all scale-95 opacity-0" id="modal-content">
-            <button id="close-modal-btn" class="absolute top-4 right-4 text-gray-500 hover:text-white transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-            </button>
-            <h2 class="text-2xl font-bold mb-4 text-white" data-en="Join the Cause!" data-he="הצטרף למטרה!">Join the Cause!</h2>
-            <form id="donation-form">
-                <div class="mb-4">
-                    <label for="name" class="block text-sm font-medium text-gray-300 mb-1" data-en="Your Name" data-he="השם שלך">Your Name</label>
-                    <input type="text" id="name" name="name" class="w-full bg-gray-700 border-gray-600 text-white rounded-lg p-2 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 outline-none transition" required>
-                </div>
-                <div class="mb-4">
-                    <label for="amount" class="block text-sm font-medium text-gray-300 mb-1" data-en="Amount ($)" data-he="סכום ($)">Amount ($)</label>
-                    <input type="number" id="amount" name="amount" class="w-full bg-gray-700 border-gray-600 text-white rounded-lg p-2 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 outline-none transition" required min="1">
-                </div>
-                <div class="mb-6">
-                    <label for="message" class="block text-sm font-medium text-gray-300 mb-1" data-en="Leave a nice message" data-he="השאר הודעה נחמדה">Leave a nice message</label>
-                    <textarea id="message" name="message" rows="3" class="w-full bg-gray-700 border-gray-600 text-white rounded-lg p-2 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 outline-none transition" required></textarea>
-                </div>
-                <button type="submit" class="w-full bg-purple-600 hover:bg-purple-500 text-white font-bold py-3 px-6 rounded-lg text-lg shadow-lg hover:shadow-purple-500/50 transition-all duration-300" data-en="Confirm Donation" data-he="אשר תרומה">Confirm Donation</button>
-            </form>
         </div>
-    </div>
+    </footer>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // --- STATE & CONFIG ---
-            const GOAL = 10000;
-            let currentRaised = 4500;
-            let currentLanguage = 'en';
+<script>
+    // --- DATA SIMULATION (In a real app, this comes from a back-office API) ---
+    const AppData = {
+        shulName: "בית הכנסת המרכזי, טבריה",
+        location: { lat: 32.7940, lon: 35.5318 }, // Tiberias
+        mainContent: [
+            {
+                type: 'dedication',
+                title: 'קידוש שבת פרשת במדבר',
+                sponsor: 'משפחת כהן',
+                text: 'לרגל הולדת הנכדה. מזל טוב!',
+                image: 'https://placehold.co/150x150/EADDCA/44403C?text=מזל+טוב'
+            },
+            {
+                type: 'simcha',
+                title: 'מזל טוב!',
+                family: 'משפחת לוי',
+                text: 'לרגל אירוסי הבן, יוסף, עם רבקה בת ישראל ישראלי'
+            },
+            {
+                type: 'welcome',
+                title: 'ברוכים הבאים',
+                family: 'משפחת חדד',
+                text: 'אנו שמחים לקבל אתכם לקהילתנו!'
+            },
+            {
+                type: 'dedication',
+                title: 'סעודה שלישית',
+                sponsor: 'משפחת אברהם',
+                text: 'לעילוי נשמת סבם, אברהם בן יצחק ז"ל'
+            }
+        ],
+        zmanim: { // Note: In production, use a library like KosherZmanim.js or an API (e.g., hebcal.com) based on location. These are illustrative for Tiberias.
+            'עלות השחר': '04:05',
+            'נץ החמה': '05:33',
+            'סוף זמן ק"ש': '09:11',
+            'סוף זמן תפילה': '10:18',
+            'חצות היום': '12:43',
+            'מנחה גדולה': '13:17',
+            'שקיעת החמה': '19:53',
+            'צאת הכוכבים': '20:15'
+        },
+        schedule: {
+            weekday: [
+                { prayer: 'שחרית', time: '06:30, 07:30' },
+                { prayer: 'מנחה', time: '13:30, 19:30' },
+                { prayer: 'ערבית', time: '20:15' }
+            ],
+            shabbat: [
+                { prayer: 'מנחה ע"ש', time: '18:45' },
+                { prayer: 'קבלת שבת', time: '19:00' },
+                { prayer: 'שחרית', time: '08:15' },
+                { prayer: 'מנחה', time: '18:30' }
+            ],
+            shiurim: [
+                 { name: 'דף היומי', time: 'לאחר תפילת שחרית' },
+                 { name: 'אבות ובנים', time: 'שבת ב-17:00' },
+                 { name: 'שיעור תהילים', time: 'שלישי ב-20:00' }
+            ]
+        },
+        announcements: [
+            'הציבור מוזמן לאזכרה השנתית למרן הרב עובדיה יוסף זצ"ל ביום שני.',
+            'רישום לקייטנות הקיץ בעיצומו במשרדי המתנ"ס.',
+            'תזכורת: יש להחנות את הרכבים בחניון המסודר בלבד.',
+            'גמ"ח "יד חמה" מחפש מתנדבים לחלוקת מזון לשבת.'
+        ]
+    };
 
-            const initialDonations = [
-                {
-                    name: "Dvir",
-                    amount: 500,
-                    message: {
-                        en: "OMG LAVI! WITHOUT YOU, WE ARE BUT DIGITAL DUST IN THE COSMIC WIND! THIS KEYBOARD ISN'T JUST A TOOL, IT'S THE HOLY GRAIL OF PRODUCTIVITY! TAKE MY MONEY! TAKE IT ALL! FOR THE CODE!!!!!",
-                        he: "אומייגאד לביא! בלעדיך אנחנו סתם אבק דיגיטלי ברוח הקוסמית! המקלדת הזו היא לא רק כלי, היא הגביע הקדוש של הפרודוקטיביות! קח את הכסף שלי! קח הכל! למען הקוד!!!!!"
-                    },
-                    avatar: 'D'
-                },
-                { name: "Jonathan", amount: 250, message: { en: "Happy to help, Lavi! You're the best.", he: "שמח לעזור, לביא! אתה הטוב ביותר." }, avatar: 'J' },
-                { name: "Asaf", amount: 200, message: { en: "For all the times you've saved us from a git disaster. Cheers!", he: "על כל הפעמים שהצלת אותנו מאסון git. לחיים!" }, avatar: 'A' },
-                { name: "Eliezer & Hili", amount: 300, message: { en: "A small token for a great CTO. Enjoy the new setup!", he: "שי קטן ל-CTO גדול. תהנה מהציוד החדש!" }, avatar: 'E' },
-                { name: "Efraim", amount: 150, message: { en: "Anything for our fearless leader. Hope this helps!", he: "הכל למען המנהיג חסר הפחד שלנו. מקווה שזה עוזר!" }, avatar: 'E' },
-            ];
-            
-            let allDonations = [...initialDonations];
+    // --- DOM ELEMENTS ---
+    const mainContentArea = document.getElementById('main-content-area');
+    const clockEl = document.getElementById('clock');
+    const hebrewDateEl = document.getElementById('hebrew-date');
+    const zmanimListEl = document.getElementById('zmanim-list');
+    const weekdayPrayersEl = document.getElementById('weekday-prayers');
+    const shabbatPrayersEl = document.getElementById('shabbat-prayers');
+    const shiurimListEl = document.getElementById('shiurim-list');
+    const announcementsListEl = document.getElementById('announcements-list');
+    const shulNameEl = document.getElementById('shul-name');
 
-            // --- DOM ELEMENTS ---
-            const progressBar = document.getElementById('progress-bar');
-            const currentAmountEl = document.getElementById('current-amount');
-            const donationsContainer = document.getElementById('donations-container');
-            const donateNowBtn = document.getElementById('donate-now-btn');
-            const donationModal = document.getElementById('donation-modal');
-            const modalContent = document.getElementById('modal-content');
-            const closeModalBtn = document.getElementById('close-modal-btn');
-            const donationForm = document.getElementById('donation-form');
-            const langSwitcherBtn = document.getElementById('lang-switcher');
-            const translatableElements = document.querySelectorAll('[data-en]');
+    // --- CLOCK & DATE ---
+    function updateClockAndDate() {
+        const now = new Date();
+        const timeString = now.toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        clockEl.textContent = timeString;
 
-            // --- FUNCTIONS ---
+        const hebrewDateStr = new Intl.DateTimeFormat('he-u-ca-hebrew', {
+            year: 'numeric', month: 'long', day: 'numeric'
+        }).format(now);
+        const gregorianDateStr = new Intl.DateTimeFormat('he-IL', {
+            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+        }).format(now);
+        
+        hebrewDateEl.textContent = `${hebrewDateStr} | ${gregorianDateStr}`;
+    }
 
-            const updateProgress = () => {
-                const percentage = Math.min((currentRaised / GOAL) * 100, 100);
-                progressBar.style.width = `${percentage}%`;
-                currentAmountEl.textContent = `$${currentRaised.toLocaleString()}`;
-            };
+    // --- CONTENT RENDERING ---
+    function renderMainContent(item) {
+        let contentHtml = '';
+        switch (item.type) {
+            case 'dedication':
+                contentHtml = `
+                    <div class="main-content-item text-center bg-white/50 p-10 rounded-2xl shadow-xl max-w-4xl mx-auto">
+                        <h2 class="text-5xl font-bold text-amber-900 mb-4">${item.title}</h2>
+                        ${item.image ? `<img src="${item.image}" alt="הקדשה" class="mx-auto rounded-lg mb-4 w-36 h-36 object-cover border-4 border-white shadow-md">` : ''}
+                        <p class="text-4xl text-gray-800">נתרם על ידי <span class="font-semibold">${item.sponsor}</span></p>
+                        <p class="text-3xl text-gray-600 mt-2">${item.text}</p>
+                    </div>`;
+                break;
+            case 'simcha':
+                 contentHtml = `
+                    <div class="main-content-item text-center bg-white/50 p-10 rounded-2xl shadow-xl max-w-4xl mx-auto">
+                        <h2 class="text-6xl font-bold text-blue-800 mb-4">${item.title}</h2>
+                        <p class="text-4xl text-gray-800">למשפחת <span class="font-semibold">${item.family}</span></p>
+                        <p class="text-3xl text-gray-600 mt-2">${item.text}</p>
+                    </div>`;
+                break;
+            case 'welcome':
+                 contentHtml = `
+                    <div class="main-content-item text-center bg-white/50 p-10 rounded-2xl shadow-xl max-w-4xl mx-auto">
+                        <h2 class="text-6xl font-bold text-teal-800 mb-4">${item.title}</h2>
+                        <p class="text-4xl text-gray-800">קהילתנו שמחה לקבל את</p>
+                        <p class="text-5xl font-semibold text-teal-900 mt-3">${item.family}</p>
+                        <p class="text-3xl text-gray-600 mt-2">${item.text}</p>
+                    </div>`;
+                break;
+        }
+        mainContentArea.innerHTML = contentHtml;
+    }
 
-            const renderDonations = () => {
-                donationsContainer.innerHTML = ''; // Clear existing donations
-                allDonations.forEach(donation => {
-                    const card = document.createElement('div');
-                    card.className = 'bg-gray-800/50 rounded-xl p-5 shadow-lg flex flex-col transition transform hover:-translate-y-1';
-                    
-                    const messageText = donation.message[currentLanguage] || donation.message['en'];
+    function populateStaticContent() {
+        shulNameEl.textContent = AppData.shulName;
 
-                    card.innerHTML = `
-                        <div class="flex items-center mb-3">
-                            <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-purple-500 to-cyan-500 flex items-center justify-center font-bold text-2xl text-white mr-4 flex-shrink-0">${donation.avatar}</div>
-                            <div>
-                                <p class="font-bold text-white text-lg">${donation.name}</p>
-                                <p class="font-semibold text-cyan-400 text-md">$${donation.amount.toLocaleString()}</p>
-                            </div>
-                        </div>
-                        <p class="text-gray-400 italic flex-grow">"${messageText}"</p>
-                    `;
-                    donationsContainer.appendChild(card);
-                });
-            };
+        zmanimListEl.innerHTML = Object.entries(AppData.zmanim)
+            .map(([name, time]) => `<li><span class="font-semibold">${name}:</span> ${time}</li>`)
+            .join('');
 
-            const switchLanguage = (lang) => {
-                currentLanguage = lang;
-                document.documentElement.lang = lang;
-                
-                translatableElements.forEach(el => {
-                    if (el.dataset[lang]) {
-                       if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
-                            el.placeholder = el.dataset[lang];
-                       } else {
-                            el.innerHTML = el.dataset[lang];
-                       }
-                    }
-                });
-                renderDonations(); // Re-render donations with the correct language
-            };
-            
-            const toggleModal = (show) => {
-                if (show) {
-                    donationModal.classList.remove('hidden');
-                    // Trigger reflow to apply transition
-                    setTimeout(() => {
-                        modalContent.classList.remove('scale-95', 'opacity-0');
-                    }, 10); 
-                } else {
-                    modalContent.classList.add('scale-95', 'opacity-0');
-                    setTimeout(() => {
-                        donationModal.classList.add('hidden');
-                    }, 200); // Match transition duration
-                }
-            };
-            
-            const handleDonationSubmit = (e) => {
-                e.preventDefault();
-                const formData = new FormData(e.target);
-                const name = formData.get('name');
-                const amount = parseInt(formData.get('amount'), 10);
-                const message = formData.get('message');
+        weekdayPrayersEl.innerHTML = AppData.schedule.weekday
+            .map(p => `<li><span class="font-semibold">${p.prayer}:</span> ${p.time}</li>`)
+            .join('');
 
-                if (name && amount > 0 && message) {
-                    const newDonation = {
-                        name,
-                        amount,
-                        message: { en: message, he: message }, // For simplicity, new messages are same in both langs
-                        avatar: name.charAt(0).toUpperCase()
-                    };
-                    
-                    allDonations.unshift(newDonation); // Add to the beginning of the array
-                    currentRaised += amount;
-                    
-                    updateProgress();
-                    renderDonations();
-                    e.target.reset();
-                    toggleModal(false);
-                }
-            };
+        shabbatPrayersEl.innerHTML = AppData.schedule.shabbat
+            .map(p => `<li><span class="font-semibold">${p.prayer}:</span> ${p.time}</li>`)
+            .join('');
+        
+        shiurimListEl.innerHTML = AppData.schedule.shiurim
+            .map(s => `<li><span class="font-semibold">${s.name}:</span> ${s.time}</li>`)
+            .join('');
 
-            // --- EVENT LISTENERS ---
-            
-            donateNowBtn.addEventListener('click', () => toggleModal(true));
-            closeModalBtn.addEventListener('click', () => toggleModal(false));
-            donationModal.addEventListener('click', (e) => {
-                if (e.target === donationModal) {
-                    toggleModal(false);
-                }
-            });
-            donationForm.addEventListener('submit', handleDonationSubmit);
+        announcementsListEl.innerHTML = AppData.announcements
+            .map(a => `<li class="border-r-4 border-teal-800/50 pr-4">${a}</li>`)
+            .join('');
+    }
 
-            langSwitcherBtn.addEventListener('click', () => {
-                const newLang = currentLanguage === 'en' ? 'he' : 'en';
-                switchLanguage(newLang);
-            });
+    // --- INITIALIZATION & TIMERS ---
+    let currentContentIndex = 0;
 
-            // --- INITIALIZATION ---
-            
-            updateProgress();
-            // Initial render with default language
-            switchLanguage(currentLanguage);
-        });
-    </script>
+    function cycleMainContent() {
+        renderMainContent(AppData.mainContent[currentContentIndex]);
+        currentContentIndex = (currentContentIndex + 1) % AppData.mainContent.length;
+    }
+
+    function init() {
+        // Initial population
+        updateClockAndDate();
+        populateStaticContent();
+        cycleMainContent();
+
+        // Set intervals
+        setInterval(updateClockAndDate, 1000); // Update clock every second
+        setInterval(cycleMainContent, 15000); // Rotate main content every 15 seconds
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+</script>
+
 </body>
 </html>
