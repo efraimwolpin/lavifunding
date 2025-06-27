@@ -7,58 +7,85 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700&display=swap" rel="stylesheet">
-    <!-- Chosen Palette: Royal Scribe -->
-    <!-- Application Structure Plan: The application is designed as a non-interactive digital noticeboard for an entrance hallway, prioritizing immediate readability. The structure is a two-part vertical split: a large (60% height) upper panel for rotating, high-impact announcements (events, dedications) and a static (40% height) lower panel for essential, persistent information (prayer times, halachic times). The lower panel uses a three-column grid for clear separation of concerns. This design is optimal for passive viewing in a high-traffic area, ensuring critical information is always available while new announcements capture attention. The entire layout is RTL to natively support Hebrew as required for the Chasidishe community. -->
-    <!-- Visualization & Content Choices: Report Info: Community Events (Hilula, Rosh Chodesh) -> Goal: Announce/Inform -> Presentation: Large, centered text cards. Interaction: Automatic rotation. Justification: This is the most direct and respectful way to present event announcements without requiring interaction. The focus is on the text itself. | Report Info: Dedications -> Goal: Acknowledge/Honor -> Presentation: Formal text cards with clear attribution. Interaction: Automatic rotation. Justification: Honors sponsors in a dignified, highly visible format suitable for the community. | Report Info: Zmanim/Schedule -> Goal: Inform -> Presentation: Static, high-contrast text lists. Interaction: Live clock updates. Justification: Provides essential, non-changing information in a predictable location for quick reference. Library/Method: Vanilla JS for DOM updates and timers. All visuals are HTML/CSS with Tailwind. -->
+    <link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;700&family=Assistant:wght@400;600&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Parchment & Gold -->
+    <!-- Application Structure Plan: The design is a non-interactive digital board optimized for a large screen in a high-traffic hallway. The layout is now split into four primary quadrants for better information hierarchy. Top-left (40% width) is a static, high-priority panel for the 'Parnas Hamizug' (A/C) campaign, displaying the full week with daily highlighting. Top-right (60% width) is a dynamic panel rotating general sponsorships. Bottom-left and bottom-center are static panels for essential times (Zmanim, Schedule). Bottom-right is a dynamic scrolling panel for community celebrations (Simchos), moving them to a persistent visibility area. This structure allows the A/C campaign to have a constant presence while still accommodating rotating dedications and community news. -->
+    <!-- Visualization & Content Choices: Report Info: A/C Campaign -> Goal: Acknowledge/Promote -> Presentation: A static weekly grid. Interaction: JS-based highlighting for the current day and a special style for the weekly sponsor. Justification: A grid provides a clear overview of the week's support, creating a sense of ongoing community effort. Highlighting focuses attention without interaction. | Report Info: General Dedications -> Goal: Inform/Honor -> Presentation: Large rotating text cards. Interaction: Automatic rotation. Justification: Maximizes visibility for various sponsors in a large format. | Report Info: Simchos -> Goal: Celebrate -> Presentation: A vertical scrolling list. Interaction: Automatic scrolling. Justification: Allows multiple announcements to be visible in a compact space, fitting for a static bottom panel. -->
     <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
         body {
             font-family: 'Assistant', sans-serif;
-            background-color: #FDFBF5; /* A very light parchment color */
+            background-color: #FDFBF5;
+            color: #382D23;
         }
-        .main-content-item {
+        .font-title { font-family: 'Frank Ruhl Libre', serif; }
+        .brand-heading { color: #581C0C; }
+        .brand-subheading { color: #78350F; }
+        .footer-panel { background-color: #F5F1E9; }
+        .rotating-content-item {
             animation: fadeIn 0.9s ease-in-out;
         }
         @keyframes fadeIn {
             from { opacity: 0; transform: scale(0.98); }
             to { opacity: 1; transform: scale(1); }
         }
-        .brand-heading { color: #581C0C; } /* Deep, rich brown for main titles */
-        .brand-subheading { color: #78350F; } /* Lighter brown for subtitles */
-        .brand-text { color: #333333; }
-        .footer-panel { background-color: #F8F4E8; }
+        .scrolling-list {
+            height: 100%;
+            overflow: hidden;
+            position: relative;
+        }
+        .scrolling-list-inner {
+            position: absolute;
+            width: 100%;
+            animation: scroll 20s linear infinite;
+        }
+        @keyframes scroll {
+            0% { top: 0; }
+            100% { top: -100%; }
+        }
     </style>
 </head>
-<body class="text-brand-text h-screen w-screen overflow-hidden flex flex-col">
+<body class="h-screen w-screen overflow-hidden flex flex-col">
 
-    <header class="w-full bg-white/30 backdrop-blur-sm p-4 shadow-sm z-10 border-b-2 border-amber-900/10">
-        <div class="max-w-7xl mx-auto flex justify-between items-center">
-            <h1 id="shul-name" class="text-4xl font-bold brand-heading">בית מדרשנו "אור ישרים"</h1>
-            <div id="date-time-header" class="text-left">
-                <div id="clock" class="text-4xl font-bold text-slate-800">11:55:00</div>
-                <div id="hebrew-date" class="text-lg text-slate-600">יום שישי, כ״ט בסיון תשפ״ה, 27 ביוני 2025</div>
+    <header class="w-full bg-white/30 backdrop-blur-sm p-3 shadow-sm z-10 border-b border-amber-900/10">
+        <div class="max-w-screen-2xl mx-auto flex justify-between items-center">
+            <h1 class="text-4xl font-title font-bold brand-heading">בית מדרשנו "אור ישרים"</h1>
+            <div class="text-left">
+                <div id="clock" class="text-3xl font-bold text-slate-800"></div>
+                <div id="hebrew-date" class="text-lg text-slate-600"></div>
             </div>
         </div>
     </header>
 
-    <main id="main-content-area" class="flex-grow flex items-center justify-center p-8">
-        <!-- Rotating content will be injected here -->
+    <main class="flex-grow flex p-6 gap-6">
+        <!-- A/C Campaign Panel -->
+        <div id="ac-campaign-panel" class="w-2/5 bg-amber-50 rounded-lg shadow-md p-6 flex flex-col border border-amber-200">
+            <h2 class="text-4xl font-title font-bold brand-heading text-center mb-4">פרנס המיזוג השבועי</h2>
+            <div id="parnas-week" class="bg-gradient-to-br from-amber-200 to-amber-100 border-2 border-amber-400 p-4 rounded-lg text-center mb-4 shadow-inner">
+                <p class="text-xl brand-subheading font-semibold">פרנס השבוע</p>
+                <p id="parnas-week-name" class="text-3xl font-title font-bold brand-heading"></p>
+            </div>
+            <div id="parnas-days" class="grid grid-rows-7 gap-1 flex-grow">
+                <!-- Daily sponsors will be populated here -->
+            </div>
+        </div>
+
+        <!-- Rotating Dedications Panel -->
+        <div id="rotating-content-area" class="w-3/5 flex items-center justify-center">
+            <!-- Rotating content will be injected here -->
+        </div>
     </main>
 
     <footer class="w-full h-[40vh] shadow-[0_-4px_8px_-2px_rgba(0,0,0,0.05)]">
         <div class="h-full mx-auto grid grid-cols-3 gap-px bg-amber-900/20">
-            <!-- Zmanim Column -->
+            <!-- Zmanim & Clock Panel -->
             <div class="footer-panel p-6 flex flex-col">
-                <h2 class="text-3xl font-bold brand-heading border-b-2 border-amber-900/20 pb-2 mb-4">זמני היום - ערב שבת קודש</h2>
-                <ul id="zmanim-list" class="space-y-4 text-3xl flex-grow">
-                    <!-- Zmanim will be populated here -->
-                </ul>
+                 <h2 class="text-3xl font-title font-bold brand-heading border-b-2 border-amber-900/20 pb-2 mb-4">זמני היום - ערב שבת קודש</h2>
+                <ul id="zmanim-list" class="space-y-4 text-3xl flex-grow"></ul>
             </div>
-
-            <!-- Schedule Column -->
+            <!-- Schedule Panel -->
             <div class="footer-panel p-6 flex flex-col">
-                <h2 class="text-3xl font-bold brand-heading border-b-2 border-amber-900/20 pb-2 mb-4">סדרי התפילות והשיעורים</h2>
+                <h2 class="text-3xl font-title font-bold brand-heading border-b-2 border-amber-900/20 pb-2 mb-4">סדרי התפילות והשיעורים</h2>
                 <div class="grid grid-cols-2 gap-x-6 text-2xl flex-grow">
                     <div>
                         <h3 class="font-semibold brand-subheading mb-2">שבת קודש</h3>
@@ -70,151 +97,166 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Announcements Column -->
-            <div class="footer-panel p-6 flex flex-col h-full">
-                <h2 class="text-3xl font-bold brand-heading border-b-2 border-amber-900/20 pb-2 mb-4">הודעות הגבאים</h2>
-                <div class="flex-grow flex items-center">
-                     <p id="gabbai-message" class="text-3xl leading-relaxed"></p>
+            <!-- Simchos Panel -->
+            <div class="footer-panel p-6 flex flex-col">
+                <h2 class="text-3xl font-title font-bold brand-heading border-b-2 border-amber-900/20 pb-2 mb-4">שמחות בקהילתנו</h2>
+                <div id="simchos-list-container" class="scrolling-list flex-grow">
+                    <ul id="simchos-list" class="space-y-6 text-2xl scrolling-list-inner">
+                        <!-- Simchos will be populated here -->
+                    </ul>
                 </div>
             </div>
         </div>
     </footer>
 
 <script>
-    // --- DATA SIMULATION ---
     const AppData = {
-        shulName: "בית מדרשנו \"אור ישרים\"",
-        mainContent: [
-            {
-                type: 'dedication',
-                title: 'קידושא רבא לשבת קודש פרשת קרח',
-                sponsor: 'הרה"ח ר\' שלמה זלמן בן יצחק שליט"א',
-                text: 'לרגל שמחת הולדת נכדתו בשעה טובה ומוצלחת',
-            },
-            {
-                type: 'event',
-                title: 'התוועדות וסעודת ראש חודש תמוז',
-                text: 'תתקיים אי"ה במוצאי שבת קודש לאחר תפילת ערבית באולם בית המדרש. הציבור הקדוש מוזמן.',
-            },
-            {
-                type: 'simcha',
-                title: 'מזל טוב!',
-                family: 'לכבוד ידידנו הרה"ח ר\' דוד אליהו שליט"א',
-                text: 'לרגל שמחת אירוסי בנו, הבחור החשוב מאיר שיחי\', עם בת הרה"ח ר\' אפרים כהן שליט"א'
-            },
-            {
-                type: 'event',
-                title: 'סעודת הילולא',
-                text: 'ביום שלישי, ג\' בתמוז, תתקיים סעודת הילולא לכבוד כ"ק אדמו"ר מליובאוויטש זי"ע. פרטים נוספים יפורסמו בהמשך.',
-            }
-        ],
-        // Times for Tiberias, Friday, June 27, 2025
-        zmanim: {
-            'הדלקת נרות': '19:12',
-            'שקיעת החמה': '19:32',
-            'צאת הכוכבים': '19:54',
-        },
-        schedule: {
-            shabbat: [
-                { prayer: 'מנחה ער"ש', time: '19:20' },
-                { prayer: 'קבלת שבת', time: '19:40' },
-                { prayer: 'שחרית', time: '08:30 ו-09:45' },
-                { prayer: 'מנחה', time: '19:00' }
-            ],
-            shiurim: [
-                 { name: 'שיעור חסידות', time: 'שבת בבוקר, 08:00' },
-                 { name: 'שיעור גמרא', time: 'אחה"צ 18:00' },
-                 { name: 'לימוד תניא', time: 'בין מנחה לערבית' }
+        isACCampaignActive: true,
+        acSponsors: {
+            week: 'הרה"ח ר\' אברהם כהן ומשפחתו',
+            days: [
+                { day: 'ראשון', sponsor: 'נדבת הציבור' },
+                { day: 'שני', sponsor: 'ר\' ישראל ישראלי' },
+                { day: 'שלישי', sponsor: 'לע"נ פלוני בן אלמוני' },
+                { day: 'רביעי', sponsor: 'ר\' דוד לוי' },
+                { day: 'חמישי', sponsor: 'ר\' חיים וייס' },
+                { day: 'ערב שבת קודש', sponsor: 'ר\' משה פרידמן' },
+                { day: 'שבת קודש', sponsor: 'האחים למשפחת גולדשטיין' },
             ]
         },
-        gabbaiMessage: 'לתרומות, הקדשות וחסויות להתוועדויות ואירועים, נא לפנות אל הגבאי הרה"ח ר\' מרדכי שיחי\'.'
+        dedications: [
+            { type: 'event', title: 'סעודת הילולא - ג\' תמוז', text: 'תתקיים אי"ה במוצאי שבת קודש לכבוד כ"ק אדמו"ר מליובאוויטש זי"ע' },
+            { type: 'dedication', title: 'קידושא רבא', sponsor: 'הרה"ח ר\' שלמה זלמן שליט"א', text: 'לרגל שמחת הולדת נכדתו' }
+        ],
+        simchos: [
+            { title: 'מזל טוב!', family: 'למשפחת רוזנברג', text: 'לרגל שמחת אירוסי הבן, הבחור החשוב מאיר שיחי\''},
+            { title: 'מזל טוב!', family: 'למשפחת שטיינמץ', text: 'להולדת הבן בשעה טובה ומוצלחת'},
+            { title: 'ברוכים הבאים!', family: 'למשפחת אדלר', text: 'שהצטרפו לקהילתנו. יראו רק נחת ושמחה.'}
+        ],
+        zmanim: { 'הדלקת נרות': '19:12', 'שקיעת החמה': '19:32', 'צאת הכוכבים': '19:54' },
+        schedule: {
+            shabbat: [{ prayer: 'מנחה ער"ש', time: '19:20' }, { prayer: 'קבלת שבת', time: '19:40' }, { prayer: 'שחרית', time: '08:30' }, { prayer: 'מנחה', time: '19:00' }],
+            shiurim: [{ name: 'שיעור חסידות', time: '08:00' }, { name: 'שיעור גמרא', time: '18:00' }]
+        }
     };
 
     // --- DOM ELEMENTS ---
-    const mainContentArea = document.getElementById('main-content-area');
     const clockEl = document.getElementById('clock');
     const hebrewDateEl = document.getElementById('hebrew-date');
-    const zmanimListEl = document.getElementById('zmanim-list');
-    const shabbatPrayersEl = document.getElementById('shabbat-prayers');
-    const shiurimListEl = document.getElementById('shiurim-list');
-    const gabbaiMessageEl = document.getElementById('gabbai-message');
-    const shulNameEl = document.getElementById('shul-name');
-
-    // --- CLOCK & DATE ---
-    function updateClockAndDate() {
-        // Use a fixed start time for demonstration consistent with the prompt
-        const now = new Date('2025-06-27T11:55:00+03:00');
-        const hebrewDateStr = new Intl.DateTimeFormat('he-u-ca-hebrew', { year: 'numeric', month: 'long', day: 'numeric' }).format(now);
-        const gregorianDateStr = new Intl.DateTimeFormat('he-IL', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }).format(now);
-        hebrewDateEl.textContent = `${hebrewDateStr} | ${gregorianDateStr}`;
+    const acCampaignPanel = document.getElementById('ac-campaign-panel');
+    const rotatingContentArea = document.getElementById('rotating-content-area');
+    
+    // --- INITIALIZATION ---
+    document.addEventListener('DOMContentLoaded', () => {
+        populateStaticContent();
+        if (AppData.isACCampaignActive) {
+            renderACCampaign();
+        } else {
+            acCampaignPanel.style.display = 'none';
+            rotatingContentArea.classList.remove('w-3/5');
+            rotatingContentArea.classList.add('w-full');
+        }
         
-        let displayTime = new Date(); // Live clock for seconds
-        clockEl.textContent = displayTime.toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit', second: '2-digit', timeZone: 'Asia/Jerusalem' });
+        startRotationCycles();
+        setInterval(updateClockAndDate, 1000);
+    });
+    
+    function startRotationCycles() {
+        let dedicationIndex = 0;
+        cycleContent(AppData.dedications, rotatingContentArea, renderDedication, 10000);
+
+        const simchosList = document.getElementById('simchos-list');
+        if (AppData.simchos.length > 3) {
+           const inner = document.querySelector('.scrolling-list-inner');
+           AppData.simchos.forEach(item => {
+               const li = document.createElement('li');
+               li.innerHTML = renderSimcha(item);
+               inner.appendChild(li.cloneNode(true));
+           });
+           inner.innerHTML += inner.innerHTML; // Duplicate for smooth scroll
+        } else {
+            simchosList.innerHTML = AppData.simchos.map(renderSimcha).join('');
+        }
     }
 
-    // --- CONTENT RENDERING ---
-    function renderMainContent(item) {
-        let contentHtml = '';
-        const baseClasses = "main-content-item text-center bg-white/40 p-12 rounded-lg shadow-lg max-w-5xl mx-auto border border-amber-900/10";
-        switch (item.type) {
-            case 'dedication':
-                contentHtml = `<div class="${baseClasses}">
-                        <h2 class="text-5xl font-bold brand-heading mb-4">${item.title}</h2>
+    function cycleContent(data, element, renderer, interval) {
+        if (!data || data.length === 0) return;
+        let currentIndex = 0;
+        const cycle = () => {
+            element.innerHTML = renderer(data[currentIndex]);
+            currentIndex = (currentIndex + 1) % data.length;
+        };
+        cycle();
+        setInterval(cycle, interval);
+    }
+
+    // --- RENDER FUNCTIONS ---
+    function renderACCampaign() {
+        document.getElementById('parnas-week-name').textContent = AppData.acSponsors.week;
+        const parnasDaysContainer = document.getElementById('parnas-days');
+        const todayIndex = 5; // Friday is the 6th day (index 5)
+
+        parnasDaysContainer.innerHTML = AppData.acSponsors.days.map((item, index) => {
+            const isToday = index === todayIndex;
+            const isShabbat = index === 6;
+            let highlightClass = 'bg-white/50';
+            if (isToday) {
+                 highlightClass = 'bg-amber-300/80 font-bold shadow-lg ring-2 ring-amber-500';
+            } else if (isShabbat) {
+                 highlightClass += ' font-semibold';
+            }
+            
+            return `<div class="p-2 rounded-md text-center flex justify-between items-center text-xl transition-all duration-300 ${highlightClass}">
+                        <span class="brand-subheading">${item.day}:</span>
+                        <span>${item.sponsor}</span>
+                    </div>`;
+        }).join('');
+    }
+    
+    function renderDedication(item) {
+        const baseClasses = "rotating-content-item text-center bg-white/40 p-12 rounded-lg shadow-lg border border-amber-900/10 h-full w-full flex flex-col justify-center";
+        if (item.type === 'dedication') {
+            return `<div class="${baseClasses}">
+                        <h2 class="text-5xl font-title font-bold brand-heading mb-4">${item.title}</h2>
                         <p class="text-4xl brand-subheading">בתרומת <span class="font-semibold">${item.sponsor}</span></p>
                         <p class="text-3xl text-slate-600 mt-3">${item.text}</p>
                     </div>`;
-                break;
-            case 'event':
-                 contentHtml = `<div class="${baseClasses}">
-                        <h2 class="text-6xl font-bold brand-heading mb-6">${item.title}</h2>
-                        <p class="text-4xl leading-normal">${item.text}</p>
-                    </div>`;
-                break;
-            case 'simcha':
-                 contentHtml = `<div class="${baseClasses}">
-                        <h2 class="text-6xl font-bold brand-heading mb-4">${item.title}</h2>
-                        <p class="text-4xl brand-subheading">${item.family}</p>
-                        <p class="text-3xl text-slate-600 mt-3">${item.text}</p>
-                    </div>`;
-                break;
         }
-        mainContentArea.innerHTML = contentHtml;
+        return `<div class="${baseClasses}">
+                    <h2 class="text-6xl font-title font-bold brand-heading mb-6">${item.title}</h2>
+                    <p class="text-4xl leading-normal">${item.text}</p>
+                </div>`;
+    }
+
+    function renderSimcha(item) {
+        return `<li class="border-r-4 border-amber-500/50 pr-4 mb-6">
+                    <p class="font-bold brand-subheading text-2xl">${item.title}</p>
+                    <p class="font-semibold text-xl">${item.family}</p>
+                    <p class="text-xl">${item.text}</p>
+                </li>`;
     }
 
     function populateStaticContent() {
-        shulNameEl.textContent = AppData.shulName;
+        const zmanimListEl = document.getElementById('zmanim-list');
+        const shabbatPrayersEl = document.getElementById('shabbat-prayers');
+        const shiurimListEl = document.getElementById('shiurim-list');
+
         zmanimListEl.innerHTML = Object.entries(AppData.zmanim)
             .map(([name, time]) => `<li class="flex justify-between items-baseline border-b border-dashed border-amber-900/20 pb-2"><span class="font-semibold">${name}</span> <span class="font-bold text-slate-800">${time}</span></li>`)
             .join('');
-
         shabbatPrayersEl.innerHTML = AppData.schedule.shabbat
-            .map(p => `<li><span class="font-semibold">${p.prayer}:</span> ${p.time}</li>`)
-            .join('');
-        
+            .map(p => `<li><span class="font-semibold">${p.prayer}:</span> ${p.time}</li>`).join('');
         shiurimListEl.innerHTML = AppData.schedule.shiurim
-            .map(s => `<li><span class="font-semibold">${s.name}:</span> ${s.time}</li>`)
-            .join('');
-
-        gabbaiMessageEl.textContent = AppData.gabbaiMessage;
+            .map(s => `<li><span class="font-semibold">${s.name}:</span> ${s.time}</li>`).join('');
     }
 
-    // --- INITIALIZATION & TIMERS ---
-    let currentContentIndex = 0;
-    function cycleMainContent() {
-        renderMainContent(AppData.mainContent[currentContentIndex]);
-        currentContentIndex = (currentContentIndex + 1) % AppData.mainContent.length;
+    function updateClockAndDate() {
+        const now = new Date();
+        const hebrewDateStr = new Intl.DateTimeFormat('he-u-ca-hebrew', { year: 'numeric', month: 'long', day: 'numeric' }).format(now);
+        const gregorianDateStr = new Intl.DateTimeFormat('he-IL', { weekday: 'long' }).format(now);
+        hebrewDateEl.textContent = `${gregorianDateStr}, ${hebrewDateStr}`;
+        clockEl.textContent = now.toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
     }
-
-    function init() {
-        populateStaticContent();
-        cycleMainContent();
-        setInterval(updateClockAndDate, 1000);
-        setInterval(cycleMainContent, 15000);
-    }
-
-    document.addEventListener('DOMContentLoaded', init);
 </script>
-
 </body>
 </html>
