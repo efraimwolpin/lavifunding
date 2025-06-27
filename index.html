@@ -3,51 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>לוח מודעות דיגיטלי - בית כנסת המרכזי</title>
+    <title>לוח מודעות - קהילתנו</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700&display=swap" rel="stylesheet">
-    <!-- Chosen Palette: Gilded Parchment -->
-    <!-- Application Structure Plan: The application uses a two-part dashboard structure as specified in the source report, which is ideal for digital signage. A large, dynamic upper panel (60% height) rotates key messages (dedications, celebrations) to capture attention, while a static lower panel (40% height) presents essential, persistent information (schedules, times, clock) in a clear three-column grid. This separation ensures that viewers can always find critical information at a glance while being kept up-to-date with changing announcements. The entire layout is Right-to-Left (RTL) to support the Hebrew language requirement. -->
-    <!-- Visualization & Content Choices: Report Info: Dedications, Simchos -> Goal: Inform/Celebrate -> Presentation: Large text-based cards with optional images in a rotating display. Interaction: Automatic rotation. Justification: Maximizes visibility for key announcements on a large screen. | Report Info: Zmanim, Schedule, Clock -> Goal: Inform -> Presentation: Static, high-contrast text lists in a grid. Interaction: Clock updates live. Justification: Guarantees readability and constant availability of essential daily information. Library/Method: All elements are structured HTML styled with Tailwind CSS and dynamically updated with vanilla JavaScript. -->
+    <!-- Chosen Palette: Royal Scribe -->
+    <!-- Application Structure Plan: The application is designed as a non-interactive digital noticeboard for an entrance hallway, prioritizing immediate readability. The structure is a two-part vertical split: a large (60% height) upper panel for rotating, high-impact announcements (events, dedications) and a static (40% height) lower panel for essential, persistent information (prayer times, halachic times). The lower panel uses a three-column grid for clear separation of concerns. This design is optimal for passive viewing in a high-traffic area, ensuring critical information is always available while new announcements capture attention. The entire layout is RTL to natively support Hebrew as required for the Chasidishe community. -->
+    <!-- Visualization & Content Choices: Report Info: Community Events (Hilula, Rosh Chodesh) -> Goal: Announce/Inform -> Presentation: Large, centered text cards. Interaction: Automatic rotation. Justification: This is the most direct and respectful way to present event announcements without requiring interaction. The focus is on the text itself. | Report Info: Dedications -> Goal: Acknowledge/Honor -> Presentation: Formal text cards with clear attribution. Interaction: Automatic rotation. Justification: Honors sponsors in a dignified, highly visible format suitable for the community. | Report Info: Zmanim/Schedule -> Goal: Inform -> Presentation: Static, high-contrast text lists. Interaction: Live clock updates. Justification: Provides essential, non-changing information in a predictable location for quick reference. Library/Method: Vanilla JS for DOM updates and timers. All visuals are HTML/CSS with Tailwind. -->
     <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
         body {
             font-family: 'Assistant', sans-serif;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
+            background-color: #FDFBF5; /* A very light parchment color */
         }
         .main-content-item {
-            animation: fadeIn 0.8s ease-in-out;
+            animation: fadeIn 0.9s ease-in-out;
         }
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from { opacity: 0; transform: scale(0.98); }
+            to { opacity: 1; transform: scale(1); }
         }
-        .scrolling-list {
-            height: 100%;
-            overflow-y: auto;
-            scrollbar-width: none; /* Firefox */
-        }
-        .scrolling-list::-webkit-scrollbar {
-            display: none; /* Safari and Chrome */
-        }
+        .brand-heading { color: #581C0C; } /* Deep, rich brown for main titles */
+        .brand-subheading { color: #78350F; } /* Lighter brown for subtitles */
+        .brand-text { color: #333333; }
+        .footer-panel { background-color: #F8F4E8; }
     </style>
 </head>
-<body class="bg-stone-100 text-gray-800 h-screen w-screen overflow-hidden flex flex-col">
+<body class="text-brand-text h-screen w-screen overflow-hidden flex flex-col">
 
-    <header class="w-full bg-stone-200/80 backdrop-blur-sm p-4 shadow-md z-10">
+    <header class="w-full bg-white/30 backdrop-blur-sm p-4 shadow-sm z-10 border-b-2 border-amber-900/10">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
-            <div class="flex items-center gap-4">
-                <div class="w-12 h-12 bg-amber-800/10 rounded-full flex items-center justify-center">
-                     <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-amber-800"><path d="M20 10v11a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V10"/><path d="M18 22V8l-6-4-6 4v14"/><path d="M14 22V16a2 2 0 0 0-4 0v6"/></svg>
-                </div>
-                <h1 id="shul-name" class="text-3xl font-bold text-amber-900">בית הכנסת המרכזי, טבריה</h1>
-            </div>
+            <h1 id="shul-name" class="text-4xl font-bold brand-heading">בית מדרשנו "אור ישרים"</h1>
             <div id="date-time-header" class="text-left">
-                <div id="clock" class="text-4xl font-bold text-gray-900"></div>
-                <div id="hebrew-date" class="text-lg text-gray-600"></div>
+                <div id="clock" class="text-4xl font-bold text-slate-800">11:55:00</div>
+                <div id="hebrew-date" class="text-lg text-slate-600">יום שישי, כ״ט בסיון תשפ״ה, 27 ביוני 2025</div>
             </div>
         </div>
     </header>
@@ -56,113 +46,89 @@
         <!-- Rotating content will be injected here -->
     </main>
 
-    <footer class="w-full bg-white/70 backdrop-blur-sm shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] h-[40vh]">
-        <div class="h-full mx-auto grid grid-cols-3 gap-px bg-gray-200">
+    <footer class="w-full h-[40vh] shadow-[0_-4px_8px_-2px_rgba(0,0,0,0.05)]">
+        <div class="h-full mx-auto grid grid-cols-3 gap-px bg-amber-900/20">
             <!-- Zmanim Column -->
-            <div class="bg-stone-50 p-6 flex flex-col">
-                <h2 class="text-3xl font-bold text-amber-800 border-b-2 border-amber-800/50 pb-2 mb-4">זמני היום</h2>
-                <ul id="zmanim-list" class="space-y-3 text-2xl">
+            <div class="footer-panel p-6 flex flex-col">
+                <h2 class="text-3xl font-bold brand-heading border-b-2 border-amber-900/20 pb-2 mb-4">זמני היום - ערב שבת קודש</h2>
+                <ul id="zmanim-list" class="space-y-4 text-3xl flex-grow">
                     <!-- Zmanim will be populated here -->
                 </ul>
             </div>
 
             <!-- Schedule Column -->
-            <div class="bg-stone-50 p-6 flex flex-col">
-                <h2 class="text-3xl font-bold text-blue-900 border-b-2 border-blue-900/50 pb-2 mb-4">לוח זמנים</h2>
-                <div class="grid grid-cols-2 gap-x-6 text-2xl">
+            <div class="footer-panel p-6 flex flex-col">
+                <h2 class="text-3xl font-bold brand-heading border-b-2 border-amber-900/20 pb-2 mb-4">סדרי התפילות והשיעורים</h2>
+                <div class="grid grid-cols-2 gap-x-6 text-2xl flex-grow">
                     <div>
-                        <h3 class="font-semibold mb-2">תפילות חול</h3>
-                        <ul id="weekday-prayers" class="space-y-2"></ul>
-                    </div>
-                    <div>
-                        <h3 class="font-semibold mb-2">תפילות שבת</h3>
+                        <h3 class="font-semibold brand-subheading mb-2">שבת קודש</h3>
                         <ul id="shabbat-prayers" class="space-y-2"></ul>
                     </div>
-                </div>
-                <div class="mt-auto pt-4">
-                     <h3 class="font-semibold mb-2 text-2xl">שיעורים ותוכניות</h3>
-                     <ul id="shiurim-list" class="space-y-2 text-xl"></ul>
+                    <div>
+                        <h3 class="font-semibold brand-subheading mb-2">שיעורים קבועים</h3>
+                        <ul id="shiurim-list" class="space-y-2"></ul>
+                    </div>
                 </div>
             </div>
 
             <!-- Announcements Column -->
-            <div class="bg-stone-50 p-6 flex flex-col h-full">
-                <h2 class="text-3xl font-bold text-teal-800 border-b-2 border-teal-800/50 pb-2 mb-4">הודעות ואירועים</h2>
-                <div class="scrolling-list flex-grow">
-                    <ul id="announcements-list" class="space-y-4 text-2xl">
-                        <!-- Announcements will be populated here -->
-                    </ul>
+            <div class="footer-panel p-6 flex flex-col h-full">
+                <h2 class="text-3xl font-bold brand-heading border-b-2 border-amber-900/20 pb-2 mb-4">הודעות הגבאים</h2>
+                <div class="flex-grow flex items-center">
+                     <p id="gabbai-message" class="text-3xl leading-relaxed"></p>
                 </div>
             </div>
         </div>
     </footer>
 
 <script>
-    // --- DATA SIMULATION (In a real app, this comes from a back-office API) ---
+    // --- DATA SIMULATION ---
     const AppData = {
-        shulName: "בית הכנסת המרכזי, טבריה",
-        location: { lat: 32.7940, lon: 35.5318 }, // Tiberias
+        shulName: "בית מדרשנו \"אור ישרים\"",
         mainContent: [
             {
                 type: 'dedication',
-                title: 'קידוש שבת פרשת במדבר',
-                sponsor: 'משפחת כהן',
-                text: 'לרגל הולדת הנכדה. מזל טוב!',
-                image: 'https://placehold.co/150x150/EADDCA/44403C?text=מזל+טוב'
+                title: 'קידושא רבא לשבת קודש פרשת קרח',
+                sponsor: 'הרה"ח ר\' שלמה זלמן בן יצחק שליט"א',
+                text: 'לרגל שמחת הולדת נכדתו בשעה טובה ומוצלחת',
+            },
+            {
+                type: 'event',
+                title: 'התוועדות וסעודת ראש חודש תמוז',
+                text: 'תתקיים אי"ה במוצאי שבת קודש לאחר תפילת ערבית באולם בית המדרש. הציבור הקדוש מוזמן.',
             },
             {
                 type: 'simcha',
                 title: 'מזל טוב!',
-                family: 'משפחת לוי',
-                text: 'לרגל אירוסי הבן, יוסף, עם רבקה בת ישראל ישראלי'
+                family: 'לכבוד ידידנו הרה"ח ר\' דוד אליהו שליט"א',
+                text: 'לרגל שמחת אירוסי בנו, הבחור החשוב מאיר שיחי\', עם בת הרה"ח ר\' אפרים כהן שליט"א'
             },
             {
-                type: 'welcome',
-                title: 'ברוכים הבאים',
-                family: 'משפחת חדד',
-                text: 'אנו שמחים לקבל אתכם לקהילתנו!'
-            },
-            {
-                type: 'dedication',
-                title: 'סעודה שלישית',
-                sponsor: 'משפחת אברהם',
-                text: 'לעילוי נשמת סבם, אברהם בן יצחק ז"ל'
+                type: 'event',
+                title: 'סעודת הילולא',
+                text: 'ביום שלישי, ג\' בתמוז, תתקיים סעודת הילולא לכבוד כ"ק אדמו"ר מליובאוויטש זי"ע. פרטים נוספים יפורסמו בהמשך.',
             }
         ],
-        zmanim: { // Note: In production, use a library like KosherZmanim.js or an API (e.g., hebcal.com) based on location. These are illustrative for Tiberias.
-            'עלות השחר': '04:05',
-            'נץ החמה': '05:33',
-            'סוף זמן ק"ש': '09:11',
-            'סוף זמן תפילה': '10:18',
-            'חצות היום': '12:43',
-            'מנחה גדולה': '13:17',
-            'שקיעת החמה': '19:53',
-            'צאת הכוכבים': '20:15'
+        // Times for Tiberias, Friday, June 27, 2025
+        zmanim: {
+            'הדלקת נרות': '19:12',
+            'שקיעת החמה': '19:32',
+            'צאת הכוכבים': '19:54',
         },
         schedule: {
-            weekday: [
-                { prayer: 'שחרית', time: '06:30, 07:30' },
-                { prayer: 'מנחה', time: '13:30, 19:30' },
-                { prayer: 'ערבית', time: '20:15' }
-            ],
             shabbat: [
-                { prayer: 'מנחה ע"ש', time: '18:45' },
-                { prayer: 'קבלת שבת', time: '19:00' },
-                { prayer: 'שחרית', time: '08:15' },
-                { prayer: 'מנחה', time: '18:30' }
+                { prayer: 'מנחה ער"ש', time: '19:20' },
+                { prayer: 'קבלת שבת', time: '19:40' },
+                { prayer: 'שחרית', time: '08:30 ו-09:45' },
+                { prayer: 'מנחה', time: '19:00' }
             ],
             shiurim: [
-                 { name: 'דף היומי', time: 'לאחר תפילת שחרית' },
-                 { name: 'אבות ובנים', time: 'שבת ב-17:00' },
-                 { name: 'שיעור תהילים', time: 'שלישי ב-20:00' }
+                 { name: 'שיעור חסידות', time: 'שבת בבוקר, 08:00' },
+                 { name: 'שיעור גמרא', time: 'אחה"צ 18:00' },
+                 { name: 'לימוד תניא', time: 'בין מנחה לערבית' }
             ]
         },
-        announcements: [
-            'הציבור מוזמן לאזכרה השנתית למרן הרב עובדיה יוסף זצ"ל ביום שני.',
-            'רישום לקייטנות הקיץ בעיצומו במשרדי המתנ"ס.',
-            'תזכורת: יש להחנות את הרכבים בחניון המסודר בלבד.',
-            'גמ"ח "יד חמה" מחפש מתנדבים לחלוקת מזון לשבת.'
-        ]
+        gabbaiMessage: 'לתרומות, הקדשות וחסויות להתוועדויות ואירועים, נא לפנות אל הגבאי הרה"ח ר\' מרדכי שיחי\'.'
     };
 
     // --- DOM ELEMENTS ---
@@ -170,56 +136,46 @@
     const clockEl = document.getElementById('clock');
     const hebrewDateEl = document.getElementById('hebrew-date');
     const zmanimListEl = document.getElementById('zmanim-list');
-    const weekdayPrayersEl = document.getElementById('weekday-prayers');
     const shabbatPrayersEl = document.getElementById('shabbat-prayers');
     const shiurimListEl = document.getElementById('shiurim-list');
-    const announcementsListEl = document.getElementById('announcements-list');
+    const gabbaiMessageEl = document.getElementById('gabbai-message');
     const shulNameEl = document.getElementById('shul-name');
 
     // --- CLOCK & DATE ---
     function updateClockAndDate() {
-        const now = new Date();
-        const timeString = now.toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-        clockEl.textContent = timeString;
-
-        const hebrewDateStr = new Intl.DateTimeFormat('he-u-ca-hebrew', {
-            year: 'numeric', month: 'long', day: 'numeric'
-        }).format(now);
-        const gregorianDateStr = new Intl.DateTimeFormat('he-IL', {
-            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
-        }).format(now);
-        
+        // Use a fixed start time for demonstration consistent with the prompt
+        const now = new Date('2025-06-27T11:55:00+03:00');
+        const hebrewDateStr = new Intl.DateTimeFormat('he-u-ca-hebrew', { year: 'numeric', month: 'long', day: 'numeric' }).format(now);
+        const gregorianDateStr = new Intl.DateTimeFormat('he-IL', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }).format(now);
         hebrewDateEl.textContent = `${hebrewDateStr} | ${gregorianDateStr}`;
+        
+        let displayTime = new Date(); // Live clock for seconds
+        clockEl.textContent = displayTime.toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit', second: '2-digit', timeZone: 'Asia/Jerusalem' });
     }
 
     // --- CONTENT RENDERING ---
     function renderMainContent(item) {
         let contentHtml = '';
+        const baseClasses = "main-content-item text-center bg-white/40 p-12 rounded-lg shadow-lg max-w-5xl mx-auto border border-amber-900/10";
         switch (item.type) {
             case 'dedication':
-                contentHtml = `
-                    <div class="main-content-item text-center bg-white/50 p-10 rounded-2xl shadow-xl max-w-4xl mx-auto">
-                        <h2 class="text-5xl font-bold text-amber-900 mb-4">${item.title}</h2>
-                        ${item.image ? `<img src="${item.image}" alt="הקדשה" class="mx-auto rounded-lg mb-4 w-36 h-36 object-cover border-4 border-white shadow-md">` : ''}
-                        <p class="text-4xl text-gray-800">נתרם על ידי <span class="font-semibold">${item.sponsor}</span></p>
-                        <p class="text-3xl text-gray-600 mt-2">${item.text}</p>
+                contentHtml = `<div class="${baseClasses}">
+                        <h2 class="text-5xl font-bold brand-heading mb-4">${item.title}</h2>
+                        <p class="text-4xl brand-subheading">בתרומת <span class="font-semibold">${item.sponsor}</span></p>
+                        <p class="text-3xl text-slate-600 mt-3">${item.text}</p>
+                    </div>`;
+                break;
+            case 'event':
+                 contentHtml = `<div class="${baseClasses}">
+                        <h2 class="text-6xl font-bold brand-heading mb-6">${item.title}</h2>
+                        <p class="text-4xl leading-normal">${item.text}</p>
                     </div>`;
                 break;
             case 'simcha':
-                 contentHtml = `
-                    <div class="main-content-item text-center bg-white/50 p-10 rounded-2xl shadow-xl max-w-4xl mx-auto">
-                        <h2 class="text-6xl font-bold text-blue-800 mb-4">${item.title}</h2>
-                        <p class="text-4xl text-gray-800">למשפחת <span class="font-semibold">${item.family}</span></p>
-                        <p class="text-3xl text-gray-600 mt-2">${item.text}</p>
-                    </div>`;
-                break;
-            case 'welcome':
-                 contentHtml = `
-                    <div class="main-content-item text-center bg-white/50 p-10 rounded-2xl shadow-xl max-w-4xl mx-auto">
-                        <h2 class="text-6xl font-bold text-teal-800 mb-4">${item.title}</h2>
-                        <p class="text-4xl text-gray-800">קהילתנו שמחה לקבל את</p>
-                        <p class="text-5xl font-semibold text-teal-900 mt-3">${item.family}</p>
-                        <p class="text-3xl text-gray-600 mt-2">${item.text}</p>
+                 contentHtml = `<div class="${baseClasses}">
+                        <h2 class="text-6xl font-bold brand-heading mb-4">${item.title}</h2>
+                        <p class="text-4xl brand-subheading">${item.family}</p>
+                        <p class="text-3xl text-slate-600 mt-3">${item.text}</p>
                     </div>`;
                 break;
         }
@@ -228,13 +184,8 @@
 
     function populateStaticContent() {
         shulNameEl.textContent = AppData.shulName;
-
         zmanimListEl.innerHTML = Object.entries(AppData.zmanim)
-            .map(([name, time]) => `<li><span class="font-semibold">${name}:</span> ${time}</li>`)
-            .join('');
-
-        weekdayPrayersEl.innerHTML = AppData.schedule.weekday
-            .map(p => `<li><span class="font-semibold">${p.prayer}:</span> ${p.time}</li>`)
+            .map(([name, time]) => `<li class="flex justify-between items-baseline border-b border-dashed border-amber-900/20 pb-2"><span class="font-semibold">${name}</span> <span class="font-bold text-slate-800">${time}</span></li>`)
             .join('');
 
         shabbatPrayersEl.innerHTML = AppData.schedule.shabbat
@@ -245,28 +196,21 @@
             .map(s => `<li><span class="font-semibold">${s.name}:</span> ${s.time}</li>`)
             .join('');
 
-        announcementsListEl.innerHTML = AppData.announcements
-            .map(a => `<li class="border-r-4 border-teal-800/50 pr-4">${a}</li>`)
-            .join('');
+        gabbaiMessageEl.textContent = AppData.gabbaiMessage;
     }
 
     // --- INITIALIZATION & TIMERS ---
     let currentContentIndex = 0;
-
     function cycleMainContent() {
         renderMainContent(AppData.mainContent[currentContentIndex]);
         currentContentIndex = (currentContentIndex + 1) % AppData.mainContent.length;
     }
 
     function init() {
-        // Initial population
-        updateClockAndDate();
         populateStaticContent();
         cycleMainContent();
-
-        // Set intervals
-        setInterval(updateClockAndDate, 1000); // Update clock every second
-        setInterval(cycleMainContent, 15000); // Rotate main content every 15 seconds
+        setInterval(updateClockAndDate, 1000);
+        setInterval(cycleMainContent, 15000);
     }
 
     document.addEventListener('DOMContentLoaded', init);
